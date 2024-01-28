@@ -1,71 +1,99 @@
-using System;
-using System.Linq;
-using System.Reflection;
 using Hex.VM.Runtime.Util;
 
 namespace Hex.VM.Runtime.Handler.Impl.Custom
 {
     public class HxCall : HxOpCode
     {
-        public override void Execute(Context vmContext, HxInstruction instruction)
+        public override void Execute(Context ctx, HxInstruction instruction)
         {
-            var str = (string) instruction.Operand.GetObject();
+            var obj = (string)instruction.Operand.GetObject();
 
-            var type = Helper.ReadPrefix(str);
-            var prefix = Helper.ReadPrefix(str, 1);
-            var mdtoken = int.Parse(str.Substring(2));
+            var type = Helper.ReadPrefix(obj);
+            var prefix = Helper.ReadPrefix(obj, 1);
+            var mdtoken = int.Parse(obj.Substring(2));
+
             switch (prefix)
             {
-                // constructor 
                 case 0:
-                {
-                    var m = ForceResolveConstructor(mdtoken);
-                    var pm = Helper.GetMethodParameters(vmContext, m.GetParameters());
-                    var inst = m.Invoke(pm);
+                    {
+                        var constructor = Helper.ResolveConstructor(mdtoken);
+                        var parameters = Helper.GetMethodParameters(ctx, constructor);
+                        var owner = constructor.IsStatic ? null : ctx.Stack.Pop().GetObject();
 
-                    if (inst != null)
-                        vmContext.Stack.Push(inst);
+                        object instance;
+
+                        if (type == 0)
+                        {
+                            instance = constructor.Invoke(owner, parameters.ToArray());
+                        }
+                        else
+                        {
+                            var proxy = Helper.CreateProxyMethodCall(constructor);
+
+                            if (!constructor.IsStatic)
+                                parameters.Insert(0, owner);
+
+                            instance = proxy.DynamicInvoke(parameters.ToArray());
+                        }
+
+                        if (instance != null)
+                            ctx.Stack.Push(instance);
+                    }
                     break;
-                }
-
-                //  method
                 case 1:
-                {
-                    var m = ForceResolveMethod(mdtoken);
-                    var pm = Helper.GetMethodParameters(vmContext, m.GetParameters());
+                    {
+                        var method = Helper.ResolveMethod(mdtoken);
+                        var parameters = Helper.GetMethodParameters(ctx, method);
+                        var owner = method.IsStatic ? null : ctx.Stack.Pop().GetObject();
 
-                    object target = null;
-                    if (!m.IsStatic)
-                        target =vmContext.Stack.Pop().GetObject();
-                    
-                    var ret = m.Invoke(target, pm);
-                    
-                    if (ret != null)
-                        vmContext.Stack.Push(ret);
+                        object result;
 
-                    break;
-                }
+                        if (type == 0)
+                        {
+                            result = method.Invoke(owner, parameters.ToArray());
+                        }
+                        else
+                        {
+                            var proxy = Helper.CreateProxyMethodCall(method);
 
-                // member ref
+                            if (!method.IsStatic)
+                                parameters.Insert(0, owner);
+
+                            result = proxy.DynamicInvoke(parameters.ToArray());
+                        }
+
+                        if (result != null)
+                            ctx.Stack.Push(result);
+                        break;
+                    }
                 case 2:
-                {
-                    var m = ForceResolveMember(mdtoken);
-                    var pm = Helper.GetMethodParameters(vmContext, m.GetParameters());
-                    
-                    object target = null;
-                    if (!m.IsStatic)
-                        target = vmContext.Stack.Pop().GetObject();
+                    {
+                        var member = Helper.ResolveMember(mdtoken);
+                        var parameters = Helper.GetMethodParameters(ctx, member);
+                        var owner = member.IsStatic ? null : ctx.Stack.Pop().GetObject();
 
-                    var ret = m.Invoke(target, pm);
-                    
-                    if (ret != null)
-                        vmContext.Stack.Push(ret);
+                        object result;
 
+                        if (type == 0)
+                        {
+                            result = member.Invoke(owner, parameters.ToArray());
+                        }
+                        else
+                        {
+                            var proxy = Helper.CreateProxyMethodCall(member);
+
+                            if (!member.IsStatic)
+                                parameters.Insert(0, owner);
+
+                            result = proxy.DynamicInvoke(parameters.ToArray());
+                        }
+
+                        if (result != null)
+                            ctx.Stack.Push(result);
+                    }
                     break;
-                }
             }
-
-            vmContext.Index++;
+            ctx.Index++;
         }
     }
 }

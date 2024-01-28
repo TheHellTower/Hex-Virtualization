@@ -1,4 +1,5 @@
 using Hex.VM.Runtime.Util;
+using System.Linq;
 
 namespace Hex.VM.Runtime.Handler.Impl
 {
@@ -6,25 +7,10 @@ namespace Hex.VM.Runtime.Handler.Impl
     {
         public override void Execute(Context vmContext, HxInstruction instruction)
         {
-            var x = vmContext.Stack.Pop();
+            var values = new object[] { vmContext.Stack.Pop().GetObject() };
+            var result = Factory.CreateArithmethicFactory(HxOpCodes.ANot, values.Reverse().ToArray()); //Not Sure
 
-            if (x.IsInt16())
-                vmContext.Stack.Push(~(short) x.GetObject());
-            else if (x.IsInt32())
-                vmContext.Stack.Push(~(int) x.GetObject());
-            else if (x.IsInt64())
-                vmContext.Stack.Push(~(long) x.GetObject());
-            else if (x.IsUInt16())
-                vmContext.Stack.Push(~(ushort) x.GetObject());
-            else if (x.IsUInt32())
-                vmContext.Stack.Push(~(uint) x.GetObject());
-            else if (x.IsUInt64())
-                vmContext.Stack.Push(~(ulong) x.GetObject());
-            else if (x.IsByte())
-                vmContext.Stack.Push(~(byte) x.GetObject());
-            else if (x.IsSByte())
-                vmContext.Stack.Push(~(sbyte) x.GetObject());
-
+            vmContext.Stack.Push(result);
             vmContext.Index++;
         }
     }

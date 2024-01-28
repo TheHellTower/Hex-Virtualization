@@ -4,10 +4,6 @@ namespace Hex.VM.Runtime.Handler.Impl
 {
     public class Nop : HxOpCode
     {
-        public override void Execute(Context vmContext, HxInstruction instruction)
-        {
-            // do nothing really
-            vmContext.Index++;
-        }
+        public override void Execute(Context vmContext, HxInstruction instruction) => vmContext.Index++;
     }
 }

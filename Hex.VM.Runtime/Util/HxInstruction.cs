@@ -7,19 +7,10 @@ namespace Hex.VM.Runtime.Util
         public HxOpCodes OpCode { get; }
         public Value Operand { get; }
 
-        public HxInstruction(HxOpCodes opcode, Value value)
+        public HxInstruction(HxOpCodes opcode, Value value = null)
         {
             OpCode = opcode;
-            if (value == null)
-                Operand = null;
-            else
-                Operand = value;
-        }
-
-        public HxInstruction(HxOpCodes opcode)
-        {
-            OpCode = opcode;
-            Operand = null;
+            Operand = value ?? null;
         }
     }
 }

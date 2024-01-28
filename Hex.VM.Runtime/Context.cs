@@ -1,9 +1,8 @@
-using System;
-using System.Collections.Generic;
 using Hex.VM.Runtime.Handler;
 using Hex.VM.Runtime.Handler.Impl;
 using Hex.VM.Runtime.Handler.Impl.Custom;
 using Hex.VM.Runtime.Util;
+using System.Collections.Generic;
 
 namespace Hex.VM.Runtime
 {
@@ -37,8 +36,8 @@ namespace Hex.VM.Runtime
                 {HxOpCodes.HxConv, new HxConv()}, // conv
 
                 // stuff where operand is null
-                {HxOpCodes.AClt, new Clt()}, //  y<x
-                {HxOpCodes.ACgt, new Cgt()}, // y > x (first value compare first)
+                {HxOpCodes.HxClt, new HxClt()}, //  y<x
+                //{HxOpCodes.ACgt, new Cgt()}, // y > x (first value compare first)
 
                 {HxOpCodes.ANeg, new Neg()}, // -val
                 {HxOpCodes.ANot, new Not()}, //  ˜val
@@ -57,17 +56,29 @@ namespace Hex.VM.Runtime
                 {HxOpCodes.ASub, new Sub()}, // y-x
                 {HxOpCodes.ARet, new Ret()}, // return  
                 {HxOpCodes.APop, new Pop()}, // pop val on top of stack
-                {HxOpCodes.ALdlen, new Len()}, // length of array
+                {HxOpCodes.ALdlen, new Ldlen()}, // length of array
                 {HxOpCodes.ADup, new Dup()}, // dup on top of stack
                 {HxOpCodes.ADiv, new Div()}, // divide
 
                 // not custom & not null operand
                 {HxOpCodes.Ldtoken, new Ldtoken()},
-                {HxOpCodes.Br, new Br()},
+                {HxOpCodes.HxBr, new HxBr()},
                 {HxOpCodes.Brtrue, new Brtrue()},
                 {HxOpCodes.Brfalse, new Brfalse()},
                 {HxOpCodes.Box, new Box()},
-                {HxOpCodes.Newobj, new Newobj()}
+                {HxOpCodes.Newobj, new Newobj()},
+
+                {HxOpCodes.Ldloca, new Ldloca()},
+                {HxOpCodes.Ldftn, new Ldftn()},
+                {HxOpCodes.Newarr, new Newarr()},
+                {HxOpCodes.Castclass, new Castclass()},
+                {HxOpCodes.AOr, new Or()},
+                {HxOpCodes.Initobj, new Initobj()},
+                {HxOpCodes.Constrained, new Constrained()},
+                {HxOpCodes.HxCgt, new HxCgt()},
+                {HxOpCodes.Endfinally, new Endfinally()},
+                {HxOpCodes.HxBeq, new HxBeq()},
+                {HxOpCodes.HxBge, new HxBge()},
             };
         }
         

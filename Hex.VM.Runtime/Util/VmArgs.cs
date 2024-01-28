@@ -6,10 +6,7 @@ namespace Hex.VM.Runtime.Util
     {
         public Dictionary<int, Value> Args { get; }
 
-        public VmArgs()
-        {
-            Args = new Dictionary<int, Value>();
-        }
+        public VmArgs() => Args = new Dictionary<int, Value>();
 
         public VmArgs(object[] pm)
         {
@@ -18,14 +15,8 @@ namespace Hex.VM.Runtime.Util
                 Args[i] = new Value(pm[i]);
         }
 
-        public void Update(int index, Value value)
-        {
-            Args[index] = value;
-        }
+        public void Update(int index, Value value) => Args[index] = value;
 
-        public Value Get(int index)
-        {
-            return Args[index];
-        }
+        public Value Get(int index) => Args[index];
     }
 }

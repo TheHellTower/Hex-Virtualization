@@ -2,7 +2,6 @@ using Hex.VM.Runtime.Util;
 
 namespace Hex.VM.Runtime.Handler.Impl.Custom
 {
-    
     public class HxLoc : HxOpCode
     {
         public override void Execute(Context vmContext, HxInstruction instruction)
@@ -13,7 +12,8 @@ namespace Hex.VM.Runtime.Handler.Impl.Custom
 
             if (prefix == 0)
             {
-                vmContext.Stack.Push(vmContext.Locals.Get(idx));                          
+                vmContext.Stack.Push(vmContext.Locals.Get(idx));
+                //vmContext.Stack.Push(vmContext.Locals.Get(idx).GetObject());
             }
             else
             {

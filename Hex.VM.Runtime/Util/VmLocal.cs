@@ -13,14 +13,8 @@ namespace Hex.VM.Runtime.Util
                 Vars.Add(i, null);
         }
 
-        public void Update(int index, Value value)
-        {
-            Vars[index] = value;
-        }
+        public void Update(int index, Value value) => Vars[index] = value;
 
-        public Value Get(int index)
-        {
-            return !Vars.ContainsKey(index) ? null : Vars[index];
-        }
+        public Value Get(int index) => !Vars.ContainsKey(index) ? null : Vars[index];
     }
 }

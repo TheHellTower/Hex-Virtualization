@@ -6,15 +6,26 @@ namespace Hex.VM.Runtime.Handler.Impl
     {
         public override void Execute(Context vmContext, HxInstruction instruction)
         {
-            var v = vmContext.Stack.Pop();
-            int x;
+            /*var v = vmContext.Stack.Pop();
+            object val = v.GetObject();
 
             if (v.IsBool())
-                x = (bool) v.GetObject() ? 1 : 0;
+                val = (bool)v.GetObject() ? 1 : 0;
             else
-                x = (int)v.GetObject();
-            
-            if (x == 1)
+                val = (int)v.GetObject();
+
+            if (val == null || Convert.ToInt32(val) == 1)
+            {
+                vmContext.Index = (int)instruction.Operand.GetObject();
+            }
+            else
+            {
+                vmContext.Index++;
+            }*/
+            var val = vmContext.Stack.Pop().GetObject();
+            if (val is int Integer && Integer == 1)
+                vmContext.Index = (int)instruction.Operand.GetObject();
+            else if (val is bool Boolean && Boolean == true)
                 vmContext.Index = (int)instruction.Operand.GetObject();
             else
                 vmContext.Index++;

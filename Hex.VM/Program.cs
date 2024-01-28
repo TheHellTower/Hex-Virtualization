@@ -1,13 +1,9 @@
-﻿using System.Threading;
-using Hex.VM.Core;
+﻿using Hex.VM.Core;
 
 namespace Hex.VM
 {
     class Program
     {
-        static void Main(string[] args)
-        {
-             new Engine().Run(args);
-        }
+        static void Main(string[] args) => new Engine().Run(args);
     }
 }

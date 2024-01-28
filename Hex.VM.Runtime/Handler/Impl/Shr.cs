@@ -1,26 +1,16 @@
 using Hex.VM.Runtime.Util;
+using System.Linq;
 
 namespace Hex.VM.Runtime.Handler.Impl
 {
-   
     public class Shr : HxOpCode
     {
         public override void Execute(Context vmContext, HxInstruction instruction)
         {
-            var x = vmContext.Stack.Pop();
-            var y = vmContext.Stack.Pop();
+            var values = new object[] { vmContext.Stack.Pop().GetObject(), vmContext.Stack.Pop().GetObject() };
+            var result = Factory.CreateArithmethicFactory(HxOpCodes.AShr, values.Reverse().ToArray()); //Not Sure
 
-            if (x.IsInt16())
-                vmContext.Stack.Push((short) x.GetObject() >> (short) y.GetObject());
-            else if (x.IsInt32())
-                vmContext.Stack.Push((int) x.GetObject() >> (int) y.GetObject());
-            else if (x.IsUInt16())
-                vmContext.Stack.Push((ushort) x.GetObject() >> (ushort) y.GetObject());
-            else if (x.IsByte())
-                vmContext.Stack.Push((byte) x.GetObject() >> (byte) y.GetObject());
-            else if (x.IsSByte())
-                vmContext.Stack.Push((sbyte) x.GetObject() >> (sbyte) y.GetObject());
-                
+            vmContext.Stack.Push(result);
             vmContext.Index++;
         }
     }

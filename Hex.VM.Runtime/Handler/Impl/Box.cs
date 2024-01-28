@@ -1,5 +1,3 @@
-using System;
-using System.Reflection.Emit;
 using Hex.VM.Runtime.Util;
 
 namespace Hex.VM.Runtime.Handler.Impl
@@ -8,8 +6,9 @@ namespace Hex.VM.Runtime.Handler.Impl
     {
         public override void Execute(Context vmContext, HxInstruction instruction)
         {
-            // hmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
-
+            Value val = vmContext.Stack.Pop();
+            var type = Helper.ResolveType((int)instruction.Operand.GetObject());
+            vmContext.Stack.Push(vmContext.Stack.Cast(val, type));
             vmContext.Index++;
         }
     }

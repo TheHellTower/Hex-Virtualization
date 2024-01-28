@@ -1,14 +1,13 @@
-using System;
 using Hex.VM.Runtime.Util;
+using System;
 
 namespace Hex.VM.Runtime.Handler.Impl
 {
-            
-    public class Len : HxOpCode
+    public class Ldlen : HxOpCode
     {
         public override void Execute(Context vmContext, HxInstruction instruction)
         {
-            var arr = (Array)vmContext.Stack.Pop().GetObject();
+            Array arr = (Array)vmContext.Stack.Pop().GetObject();
             vmContext.Stack.Push(arr.Length);
                 
             vmContext.Index++;

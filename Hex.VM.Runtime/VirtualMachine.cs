@@ -1,94 +1,65 @@
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
 using Hex.VM.Runtime.Handler;
 using Hex.VM.Runtime.Util;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
 
 // github.com/hexck
 namespace Hex.VM.Runtime
 {
     public class VirtualMachine
     {
-        private static byte[] Extract(string resourceName, int key)
+        public static object RunVM(int key, object[] pm, string OriginalMethod)
         {
-            using (var stream = typeof(VirtualMachine).Assembly.GetManifestResourceStream(resourceName))
+            if (Assembly.GetCallingAssembly().ToString() == "{{TExecutingHAssemblyT}}")
             {
-                var bytes = new byte[stream.Length];
-                stream.Read(bytes, 0, bytes.Length);
-                return bytes.Select(bb => (byte) (bb ^ key)).ToArray();
-            }
-        }
-        
-        public static object RunVM(object[] pm)
-        {
-            var attr = new StackTrace().GetFrame(1).GetMethod().GetCustomAttributes(true).OfType<IdAttribute>()
-                .FirstOrDefault();
-            var code = Extract(attr?.Id, attr.Key);
-            
-            var ms = new MemoryStream(code);
-            var br = new BinaryReader(ms);
-            var count = br.ReadInt32();
-            var instrs = new List<HxInstruction>();
-            
-            for (var i = 0; i < count; i++)
-            {
-                var opcode = (HxOpCodes) br.ReadInt32();
-                Value operand = null;
-                if (br.ReadBoolean()) // has operand
-                {
-                    var type = br.ReadInt32();
+                var code = Helper.Extract(XXHash.CalculateXXHash32(OriginalMethod).ToString(), key);
 
-                    switch (type)
+                var ms = new MemoryStream(code);
+                var br = new BinaryReader(ms);
+                var count = br.ReadInt32();
+                var instrs = new List<HxInstruction>();
+
+                for (var i = 0; i < count; i++)
+                {
+                    var opcode = (HxOpCodes)br.ReadInt32();
+                    Value operand = null;
+                    if (br.ReadBoolean()) // has operand
                     {
-                        case 0:
-                            operand = new Value(br.ReadString());
-                            break;
-                        case 1:
-                            operand = new Value(br.ReadInt16());
-                            break;
-                        case 2:
-                            operand = new Value(br.ReadInt32());
-                            break;
-                        case 3:
-                            operand = new Value(br.ReadInt64());
-                            break;
-                        case 4:
-                            operand = new Value(br.ReadUInt16());
-                            break;
-                        case 5:
-                            operand = new Value(br.ReadUInt32());
-                            break;
-                        case 6:
-                            operand = new Value(br.ReadUInt64());
-                            break;
-                        case 7:
-                            operand = new Value(br.ReadDouble());
-                            break;
-                        case 8:
-                            operand = new Value(br.ReadDecimal());
-                            break;
-                        case 9:
-                            operand = new Value(br.ReadByte());
-                            break;
-                        case 10:
-                            operand = new Value(br.ReadSByte());
-                            break;
-                        case 11:
-                            operand = new Value(br.ReadSingle());
-                            break;
-                        case 12:
-                            operand = new Value(null);
-                            break;
+                        var type = br.ReadInt32();
+                        operand = ReadValue(br, type);
                     }
+                    //maybe is better to do this in real time as it may be a bad idea to store all of the instructions in an list like this because it would be easier to devirtualize
+                    instrs.Add(new HxInstruction(opcode, operand));
                 }
-                
-                // maybe is better to do this in real time as it may be a bad idea to store all of the instructions in an list like this because it would be easier to devirtualize
-                instrs.Add(new HxInstruction(opcode, operand));
+
+                var ctx = new Context(instrs, pm);
+                return ctx.Run().GetObject();
             }
-            
-            var ctx = new Context(instrs, pm);
-            return ctx.Run().GetObject();
+            return new object[] { "https://github.com/TheHellTower/Hex-Virtualization" };
+        }
+
+        public static Value ReadValue(BinaryReader br, int type)
+        {
+            Dictionary<int, Func<Value>> valueReaders = new Dictionary<int, Func<Value>>
+            {
+                { 0, () => new Value(br.ReadString()) },
+                { 1, () => new Value(br.ReadInt16()) },
+                { 2, () => new Value(br.ReadInt32()) },
+                { 3, () => new Value(br.ReadInt64()) },
+                { 4, () => new Value(br.ReadUInt16()) },
+                { 5, () => new Value(br.ReadUInt32()) },
+                { 6, () => new Value(br.ReadUInt64()) },
+                { 7, () => new Value(br.ReadDouble()) },
+                { 8, () => new Value(br.ReadDecimal()) },
+                { 9, () => new Value(br.ReadByte()) },
+                { 10, () => new Value(br.ReadSByte()) },
+                { 11, () => new Value(br.ReadSingle()) },
+                { 12, () => new Value(null) }
+            };
+
+            return valueReaders.TryGetValue(type, out var valueReader) ? valueReader() : valueReaders[12](); // default case is null
         }
     }
 }
