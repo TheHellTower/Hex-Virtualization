@@ -15,6 +15,7 @@ _Here a radical approach may be useful: to remove all the .NET bytecode instruct
 
 ## :bug: Known "issues" ?
 
+- Missing `ref/out` keyword support(`any method virtualized containing one will throw`)
 - Missing EH (`try{}catch{}finally{}`) support.
 - Handlers are not perfect.
 - Performances hits up to 1,5 seconds with Runtime obfuscation in a resource needy/intensive speed-test.(`not really noticiable in standard tested programs.`)

@@ -134,7 +134,11 @@ namespace Hex.VM.Runtime.Util
             for (int i = parameterTypes.Length - 1; i >= 0; i--)
             {
                 var type = parameterTypes[i];
-                var obj = ctx.Stack.Pop().GetObject();
+                var pop = ctx.Stack.Pop();
+                var obj = pop?.GetObject();
+
+                if (type.IsByRef)
+                    throw new NotSupportedException();
 
                 if (conversionMap.TryGetValue(Type.GetTypeCode(type), out var conversion))
                 {
