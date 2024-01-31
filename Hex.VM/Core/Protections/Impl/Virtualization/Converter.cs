@@ -256,6 +256,16 @@ namespace Hex.VM.Core.Protections.Impl.Virtualization
                 else if (i.OpCode == OpCodes.Call || i.OpCode == OpCodes.Callvirt)
                 {
                     var op = (IMethod)i.Operand;
+
+                    /*ByRef*/
+                    if (op.GetParams().Where(P => P.IsByRef).Count() > 0)
+                    {
+                        Compatible = false;
+                        conv.Clear();
+                        Context.Instance.Log.Warning($"`ref/out` keywords are not supported: {Method.FullName}");
+                    }
+                    /*ByRef*/
+
                     var CallVirt = (i.OpCode == OpCodes.Callvirt ? "0" : "1");
 
                     if (op.Name == ".ctor" || op.Name == ".cctor")
@@ -370,6 +380,7 @@ namespace Hex.VM.Core.Protections.Impl.Virtualization
                 }
                 else
                 {
+                    conv.Clear();
                     Compatible = false;
                     Context.Instance.Log.Warning($"Unsupported opcode: {i.OpCode}");
                 }
