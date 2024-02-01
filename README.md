@@ -38,7 +38,14 @@ _Here a radical approach may be useful: to remove all the .NET bytecode instruct
 
 <br>
 
+## 🎥 Preview
+
+https://i.imgur.com/.png
+[View Video](https://youtu.be/hIUg9JYsdOk)
+[![](https://i.imgur.com/LO6m8Ge.jpeg)](https://youtu.be/hIUg9JYsdOk)
+
 ## :bookmark_tabs: Examples
+
 <details>
   <summary> <strong>Before</strong> </summary>
   
