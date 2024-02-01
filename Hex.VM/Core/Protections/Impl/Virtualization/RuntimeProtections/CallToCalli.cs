@@ -1,17 +1,19 @@
 ﻿using dnlib.DotNet;
 using dnlib.DotNet.Emit;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Hex.VM.Core.Protections.Impl.Virtualization.RuntimeProtections
 {
     internal static class CallToCalli
     {
+        private static List<string> Blacklist = new List<string>() { "GetMethodParameters" }; //Issues when applied
         internal static void Execute(ModuleDefMD Module)
         {
             if(Module == Context.Instance.RTModule)
             {
                 foreach (var Type in Module.GetTypes().Where(T => T.HasMethods && !T.IsGlobalModuleType && !T.Name.Contains("AssemblyLoader")).ToArray())
-                    foreach (var Method in Type.Methods.Where(M => M.HasBody && M.Body.HasInstructions).ToArray())
+                    foreach (var Method in Type.Methods.Where(M => M.HasBody && M.Body.HasInstructions && !Blacklist.Contains(M.Name)).ToArray())
                         Process(Method);
             } else
             {
