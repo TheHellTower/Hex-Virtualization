@@ -13,6 +13,15 @@ _Here a radical approach may be useful: to remove all the .NET bytecode instruct
 
 <br>
 
+## 💡 Features
+
+- [x] Virtualize Methods
+- [ ] Virtualize Strings
+
+
+Note: Unchecked = future updates
+<br>
+
 ## :bug: Known "issues" ?
 
 - Missing `ref/out` keyword support(`any method virtualized containing one will throw`)
