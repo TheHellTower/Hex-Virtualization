@@ -24,7 +24,12 @@ namespace Hex.VM.Core
 				Context.Log.Error($"Something went wrong while applying virtualization: {exc.Message}");
 			}
 
-			Context.Instance.Module.EntryPoint.Name = "[https://t.me/TheHellTower_Group]";
+			string This = "[https://t.me/TheHellTower_Group]";
+
+            if (Context.Module.Kind == ModuleKind.Dll)
+                Context.Instance.Module.GlobalType.Name = This;
+			else if (Context.Module.Kind == ModuleKind.Windows || Context.Module.Kind == ModuleKind.Console)
+                Context.Instance.Module.EntryPoint.Name = This;
 
             Save(filePath.Insert(filePath.Length - 4, "-HexVM"));
 		}
