@@ -10,7 +10,7 @@ namespace Hex.VM.Runtime
 {
     public class VirtualMachine
     {
-        public static object RunVM(int key, object[] pm, string OriginalMethod)
+        public static object RunVM(object[] pm, string OriginalMethod)
         {
             if (Assembly.GetCallingAssembly().ToString() == "{{TExecutingHAssemblyT}}")
             {

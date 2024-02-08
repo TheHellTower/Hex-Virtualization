@@ -16,19 +16,16 @@ namespace Hex.VM.Core.Protections.Impl.Virtualization
         
         public bool Compatible { get; set; }
         
-        public int Key { get; }
-        
         public string Name { get; }
 
         private BinaryWriter _binaryWriter;
 
         private MemoryStream _memoryStream;
 
-        public Converter(MethodDef methodDef, string name, int key)
+        public Converter(MethodDef methodDef, string name)
         {
             Method = methodDef;
             Name = methodDef.Name;
-            Key = key;
             Compatible = true;
             _memoryStream = new MemoryStream();
             _binaryWriter = new BinaryWriter(_memoryStream);

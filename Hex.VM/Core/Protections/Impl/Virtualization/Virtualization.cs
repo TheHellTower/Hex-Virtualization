@@ -33,9 +33,8 @@ namespace Hex.VM.Core.Protections.Impl.Virtualization
                     Context.Instance.Log.Information($"Virtualizing method: {method.FullName}");
 					
 					var name = Generator.RandomName();
-					var key = Generator.NextInt(1, 10000);
 					
-					var conv = new Converter(method, name, key);
+					var conv = new Converter(method, name);
 					conv.Save();
 					
 					if (!conv.Compatible)
@@ -45,8 +44,6 @@ namespace Hex.VM.Core.Protections.Impl.Virtualization
 					}
 					
 					method.Body = new CilBody();
-
-                    method.Body.Instructions.Add(new Instruction(OpCodes.Ldc_I4, key));
 
 					/*if (method.Parameters.Count() == 0)
 					{
