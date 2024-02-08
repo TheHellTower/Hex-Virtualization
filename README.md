@@ -198,3 +198,5 @@ https://docs.microsoft.com/en-us/dotnet/api/system.reflection.emit.opcodes?view=
 <a href="https://github.com/hexck">Hexk</a> for <a href="https://github.com/hexck/Hex-Virtualization">HexVM(Hex-Virtualization)</a>
 <br>
 <a href="https://github.com/CursedLand">CursedLand</a> for <a href="https://github.com/CursedLand/ILVirtualization">ILVirtualization</a> | [Factory](https://github.com/CursedLand/ILVirtualization/blob/master/Runtime/Factory.cs) & [Cast](https://github.com/CursedLand/ILVirtualization/blob/master/Runtime/ILValue.cs#L27)
+<br>
+<a href="https://github.com/cod3nym">Jonathan Peters</a>

@@ -14,7 +14,7 @@ namespace Hex.VM.Runtime
         {
             if (Assembly.GetCallingAssembly().ToString() == "{{TExecutingHAssemblyT}}")
             {
-                var code = Helper.Extract(XXHash.CalculateXXHash32(OriginalMethod).ToString(), key);
+                var code = Helper.Extract(XXHash.CalculateXXHash32(OriginalMethod).ToString());
 
                 var ms = new MemoryStream(code);
                 var br = new BinaryReader(ms);

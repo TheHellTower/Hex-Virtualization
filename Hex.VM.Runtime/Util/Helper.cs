@@ -9,13 +9,53 @@ namespace Hex.VM.Runtime.Util
 {
     public class Helper
     {
-        internal static byte[] Extract(string resourceName, int key)
+        internal static byte[] Extract(string resourceName)
         {
             using (var stream = Assembly.GetEntryAssembly().GetManifestResourceStream(resourceName))
             {
                 var bytes = new byte[stream.Length];
                 stream.Read(bytes, 0, bytes.Length);
-                return bytes.Select(bb => (byte)(bb ^ key)).ToArray();
+
+                int n = bytes.Length - 1;
+                int[] key = resourceName.Select(c => int.Parse(c.ToString())).ToArray();
+
+                // XOR Cipher decryption with array reversal and key rotation
+                for (int i = 0; i < n; i++, n--)
+                {
+                    // Reverse the array
+                    Array.Reverse(bytes);
+
+                    bytes[i] ^= bytes[n];
+                    bytes[n] ^= (byte)(bytes[i] ^ key[i % key.Length]);
+                    bytes[i] ^= bytes[n];
+
+                    // Rotate the key
+                    RotateKey(ref key);
+                }
+
+                if (bytes.Length % 2 != 0)
+                    bytes[bytes.Length >> 1] ^= (byte)key[key.Length - 1];
+
+                return bytes;
+            }
+        }
+        private static void RotateKey(ref int[] key)
+        {
+            int rotationFactor = key.Length % 5 + 1;
+            // Automatically decide the multiplier based on key characteristics
+            int multiplier = (key.Sum() + key.Aggregate(1, (current, val) => current * val)) % (int.MaxValue / key.Length);
+            int preDivide = multiplier != 0 ? int.MaxValue / multiplier : int.MaxValue / 1337;
+
+            for (int rotationCount = 0; rotationCount < rotationFactor; rotationCount++)
+            {
+                int lastElement = key[key.Length - 1];
+
+                for (int i = key.Length - 1; i > 0; i--)
+                {
+                    key[i] = (key[i - 1] * multiplier + key.Length) % preDivide;
+                }
+
+                key[0] = (lastElement * multiplier + key.Length) % preDivide;
             }
         }
 

@@ -388,7 +388,56 @@ namespace Hex.VM.Core.Protections.Impl.Virtualization
 
             return conv;
         }
-        public void Save() => Context.Instance.Module.Resources.Add(new EmbeddedResource(XXHash.CalculateXXHash32(Method.MDToken.ToInt32().ToString()).ToString(), ConvertMethod().Select(bb => (byte)(bb ^ Key)).ToArray()));
+
+        public void Save()
+        {
+            string resourceName = XXHash.CalculateXXHash32(Method.MDToken.ToInt32().ToString()).ToString();
+            byte[] methodBytes = ConvertMethod();
+            int[] key = resourceName.Select(c => int.Parse(c.ToString())).ToArray();
+
+            // XOR Cipher encryption with array reversal and key rotation
+            int n = methodBytes.Length - 1;
+
+            for (int i = 0; i < n; i++, n--)
+            {
+                methodBytes[i] ^= methodBytes[n];
+                methodBytes[n] ^= (byte)(methodBytes[i] ^ key[i % key.Length]);
+                methodBytes[i] ^= methodBytes[n];
+
+                Array.Reverse(methodBytes);
+
+                // Rotate the key
+                RotateKey(ref key);
+            }
+
+            if (methodBytes.Length % 2 != 0)
+                methodBytes[methodBytes.Length >> 1] ^= (byte)key[key.Length - 1];
+
+            Context.Instance.Module.Resources.Add(new EmbeddedResource(
+                resourceName,
+                methodBytes
+            ));
+        }
+
+        private static void RotateKey(ref int[] key)
+        {
+            int rotationFactor = key.Length % 5 + 1;
+            // Automatically decide the multiplier based on key characteristics
+            int multiplier = (key.Sum() + key.Aggregate(1, (current, val) => current * val)) % (int.MaxValue / key.Length);
+            int preDivide = multiplier != 0 ? int.MaxValue / multiplier : int.MaxValue / 1337;
+
+            for (int rotationCount = 0; rotationCount < rotationFactor; rotationCount++)
+            {
+                int lastElement = key[key.Length - 1];
+
+                for (int i = key.Length - 1; i > 0; i--)
+                {
+                    key[i] = (key[i - 1] * multiplier + key.Length) % preDivide;
+                }
+
+                key[0] = (lastElement * multiplier + key.Length) % preDivide;
+            }
+        }
 
         internal static class XXHash
         {
