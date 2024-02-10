@@ -45,10 +45,10 @@ namespace Hex.VM.Core.Protections.Impl.Virtualization
 					
 					method.Body = new CilBody();
 
-					/*if (method.Parameters.Count() == 0)
+					if (method.Parameters.Count() == 0)
 					{
                         method.Body.Instructions.Add(new Instruction(OpCodes.Ldnull));
-                    } else*/
+                    } else
 					{
                         method.Body.Instructions.Add(new Instruction(OpCodes.Ldc_I4, method.Parameters.Count));
                         method.Body.Instructions.Add(OpCodes.Newarr.ToInstruction(context.Module.CorLibTypes.Object));

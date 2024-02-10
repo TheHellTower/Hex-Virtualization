@@ -34,7 +34,7 @@ namespace Hex.VM.Runtime
                     instrs.Add(new HxInstruction(opcode, operand));
                 }
 
-                var ctx = new Context(instrs, pm);
+                var ctx = new Context(instrs, pm ?? new object[0]);
                 return ctx.Run().GetObject();
             }
             return new object[] { "https://github.com/TheHellTower/Hex-Virtualization" };

@@ -39,6 +39,7 @@ namespace Hex.VM.Runtime.Util
                 return bytes;
             }
         }
+
         private static void RotateKey(ref int[] key)
         {
             int rotationFactor = key.Length % 5 + 1;
