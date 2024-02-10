@@ -6,28 +6,18 @@ namespace Hex.VM.Core.Protections.LoadDLLRuntime
 {
     public static class VMInitialize
     {
-        private static Assembly assembly = null;
-
-        private static Stream manifestResourceStream = null;
-
-        private static byte[] array = null;
-
-        public const int QLZ_VERSION_MAJOR = 1;
-        public const int QLZ_VERSION_MINOR = 5;
-        public const int QLZ_VERSION_REVISION = 0;
-        public const int QLZ_STREAMING_BUFFER = 0;
-        public const int QLZ_MEMORY_SAFE = 0;
-        private const int HASH_VALUES = 4096;
-        private const int UNCONDITIONAL_MATCHLEN = 6;
-        private const int UNCOMPRESSED_END = 4;
-        private const int CWORD_LEN = 4;
-
-
         public static void InitializeRuntime() => AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
 
         private static Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
         {
-            manifestResourceStream = Assembly.GetCallingAssembly().GetManifestResourceStream("Hex.VM.Runtime.THT");
+            byte[] array = null;
+
+            int HASH_VALUES = 4096;
+            int UNCONDITIONAL_MATCHLEN = 6;
+            int UNCOMPRESSED_END = 4;
+            int CWORD_LEN = 4;
+
+            Stream manifestResourceStream = Assembly.GetCallingAssembly().GetManifestResourceStream("Hex.VM.Runtime.THT");
             array = new byte[manifestResourceStream.Length];
             manifestResourceStream.Read(array, 0, array.Length);
             byte[] source = array;
@@ -209,8 +199,7 @@ namespace Hex.VM.Core.Protections.LoadDLLRuntime
                 }
             }
             Final:
-            assembly = Assembly.Load(source);
-            return assembly;
+            return Assembly.Load(source);
         }
     }
 }
