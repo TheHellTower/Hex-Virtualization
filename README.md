@@ -16,7 +16,7 @@ _Here a radical approach may be useful: to remove all the .NET bytecode instruct
 ## 💡 Features
 
 - [x] Virtualize Methods
-- [ ] Virtualize Strings
+- [x] Virtualize Strings
 
 
 Note: Unchecked = future updates
