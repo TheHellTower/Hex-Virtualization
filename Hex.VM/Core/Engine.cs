@@ -14,15 +14,15 @@ namespace Hex.VM.Core
 		{
 			string filePath = Path.GetFullPath(args[0]);
 			Context = new Context(filePath);
-			
+
 			try
 			{
-				foreach(IProtection Protection in Context.Protections)
+				foreach (IProtection Protection in Context.Protections)
 				{
 					Context.Log.Information($"{Protection.Name()} phase..");
 					Protection.Execute(Context);
 				}
-            }
+			}
 			catch (Exception exc)
 			{
 				Context.Log.Error($"Something went wrong while applying virtualization: {exc.Message}");
@@ -30,12 +30,12 @@ namespace Hex.VM.Core
 
 			string This = "[https://t.me/TheHellTower_Group]";
 
-            if (Context.Module.Kind == ModuleKind.Dll)
-                Context.Instance.Module.GlobalType.Name = This;
+			if (Context.Module.Kind == ModuleKind.Dll)
+				Context.Instance.Module.GlobalType.Name = This;
 			else if (Context.Module.Kind == ModuleKind.Windows || Context.Module.Kind == ModuleKind.Console)
-                Context.Instance.Module.EntryPoint.Name = This;
+				Context.Instance.Module.EntryPoint.Name = This;
 
-            Save(filePath.Insert(filePath.Length - 4, "-HexVM"));
+			Save(filePath.Insert(filePath.Length - 4, "-HexVM"));
 		}
 
 		private void Save(string sp)
