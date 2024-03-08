@@ -6,9 +6,7 @@ namespace Hex.VM.Core.Protections.LoadDLLRuntime
 {
     public static class VMInitialize
     {
-        public static void InitializeRuntime() => AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
-
-        private static Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
+        public static void InitializeRuntime() => AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler((object sender, ResolveEventArgs args) =>
         {
             byte[] array = null;
 
@@ -127,9 +125,7 @@ namespace Hex.VM.Core.Protections.LoadDLLRuntime
                     destination[dst + 2] = destination[offset2 + 2];
 
                     for (int i = 3; i < matchlen; i += 1)
-                    {
                         destination[dst + i] = destination[offset2 + i];
-                    }
 
                     dst += (int)matchlen;
 
@@ -198,8 +194,8 @@ namespace Hex.VM.Core.Protections.LoadDLLRuntime
                     }
                 }
             }
-            Final:
+        Final:
             return Assembly.Load(source);
-        }
+        });
     }
 }

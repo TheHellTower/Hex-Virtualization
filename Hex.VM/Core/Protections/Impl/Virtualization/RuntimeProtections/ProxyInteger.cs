@@ -11,13 +11,14 @@ namespace Hex.VM.Core.Protections.Impl.Virtualization.RuntimeProtections
     internal static class ProxyInteger
     {
         private static Hashtable HT = null;
-        private static List<string> Blacklist = new List<string>() { "Ceq", "HxCgt", "Factory" }; //Issues when applied
+        private static List<string> BlacklistTypes = new List<string>() { "<>c", "Ceq", "HxCgt", "Factory" }; //Issues when applied
+        private static List<string> BlacklistMethods = new List<string>() { "RotateKey" }; //Issues when applied
         internal static void Execute(ModuleDef Module)
         {
             HT = new Hashtable();
             MethodDef cctor = Module.GlobalType.FindOrCreateStaticConstructor();
-            foreach (var Type in Module.GetTypes().Where(T => T.HasMethods && !T.IsGlobalModuleType && !Blacklist.Contains(T.Name) && !T.Name.Contains("AssemblyLoader")).ToArray())
-                foreach (var Method in Type.Methods.Where(M => M.HasBody && M.Body.HasInstructions).ToArray())
+            foreach (var Type in Module.GetTypes().Where(T => T.HasMethods && !T.IsGlobalModuleType && !BlacklistTypes.Contains(T.Name) && !T.Name.Contains("AssemblyLoader")).ToArray())
+                foreach (var Method in Type.Methods.Where(M => M.HasBody && M.Body.HasInstructions && !BlacklistMethods.Contains(M.Name)).ToArray())
                 {
                     if (Module == Context.Instance.Module && !Context.Instance.VirtualizedMethods.Contains(Method.FullName))
                         continue;

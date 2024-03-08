@@ -265,7 +265,7 @@ namespace Hex.VM.Core.Protections.Impl.Virtualization
 
                     var CallVirt = (i.OpCode == OpCodes.Callvirt ? "0" : "1");
 
-                    if (op.Name == ".ctor" || op.Name == ".cctor")
+                    if (op.Name == ".ctor" || op.Name == ".cctor") 
                         conv.Add(new HxInstruction(HxOpCodes.HxCall, new Value(CallVirt + "0" + op.MDToken.ToInt32())));
                     else if (op.IsMethodDef)
                         conv.Add(new HxInstruction(HxOpCodes.HxCall, new Value(CallVirt + "1" + op.MDToken.ToInt32())));
@@ -340,7 +340,7 @@ namespace Hex.VM.Core.Protections.Impl.Virtualization
                 {
                     conv.Add(new HxInstruction(HxOpCodes.Newarr, new Value(((IType)i.Operand).MDToken.ToInt32())));
                 }
-                else if (i.OpCode == OpCodes.Castclass)
+                else if (i.OpCode == OpCodes.Castclass) 
                 {
                     conv.Add(new HxInstruction(HxOpCodes.Castclass, new Value(((IType)i.Operand).MDToken.ToInt32())));
                 }

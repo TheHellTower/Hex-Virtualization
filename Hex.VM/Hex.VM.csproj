@@ -48,6 +48,8 @@
     <Compile Include="Core\Helper\Compression.cs" />
     <Compile Include="Core\Helper\Generator.cs" />
     <Compile Include="Core\Helper\InjectHelper.cs" />
+    <Compile Include="Core\Protections\Impl\UStrings\Runtime.cs" />
+    <Compile Include="Core\Protections\Impl\UStrings\VStrings.cs" />
     <Compile Include="Core\Protections\Impl\Virtualization\Converter.cs" />
     <Compile Include="Core\Protections\Impl\Virtualization\RuntimeProtections\CallToCalli.cs" />
     <Compile Include="Core\Protections\Impl\Virtualization\RuntimeProtections\CFlow.cs" />

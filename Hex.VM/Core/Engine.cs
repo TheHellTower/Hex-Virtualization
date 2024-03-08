@@ -1,5 +1,6 @@
 ﻿using dnlib.DotNet;
 using dnlib.DotNet.Writer;
+using Hex.VM.Core.Protections;
 using System;
 using System.IO;
 
@@ -14,11 +15,14 @@ namespace Hex.VM.Core
 			string filePath = Path.GetFullPath(args[0]);
 			Context = new Context(filePath);
 			
-			Context.Log.Information("Virtualization phase..");
 			try
 			{
-				Context.Protections[0].Execute(Context);
-			}
+				foreach(IProtection Protection in Context.Protections)
+				{
+                    Context.Log.Information($"{Protection.Name()} phase..");
+                    Protection.Execute(Context);
+                }
+            }
 			catch (Exception exc)
 			{
 				Context.Log.Error($"Something went wrong while applying virtualization: {exc.Message}");

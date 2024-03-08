@@ -3,6 +3,7 @@ using dnlib.DotNet.Emit;
 using dnlib.DotNet.Writer;
 using Hex.VM.Core.Helper;
 using Hex.VM.Core.Protections.Impl.Virtualization.RuntimeProtections;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -12,6 +13,7 @@ namespace Hex.VM.Core.Protections.Impl.Virtualization
 {
     public class Virtualization : IProtection
 	{
+        public override string Name() => "Virtualization";
 		public override void Execute(Context context)
 		{
             protectRuntime();
@@ -21,7 +23,7 @@ namespace Hex.VM.Core.Protections.Impl.Virtualization
 				if (type.FullName.StartsWith(Context.Instance.RTModule.Assembly.Name))
 					continue;
 				
-				Context.Instance.Log.Information($"Virtualizing type: {type.FullName}");
+				Context.Instance.Log.Information($"Processing type: {type.FullName}");
 				
 				foreach (var method in type.Methods.Where(M => M.HasBody && M.Body.HasInstructions).ToArray())
 				{
@@ -101,14 +103,8 @@ namespace Hex.VM.Core.Protections.Impl.Virtualization
             TypeDef typeDef = typeModule.ResolveTypeDef(MDToken.ToRID(typeof(LoadDLLRuntime.VMInitialize).MetadataToken));
             IEnumerable<IDnlibDef> members = InjectHelper.Inject(typeDef, Context.Instance.Module.GlobalType, Context.Instance.Module);
             MethodDef init = (MethodDef)members.Single(method => method.Name == "InitializeRuntime");
-            MethodDef AssemblyResolve = (MethodDef)members.Single(method => method.Name == "CurrentDomain_AssemblyResolve");
-
-            foreach (var variable in AssemblyResolve.Body.Variables)
-                variable.Name = Generator.RandomName();
-
-            foreach (IDnlibDef member in members)
-                member.Name = Generator.RandomName();
-
+            init.Name = Generator.RandomName();
+            
             Context.Instance.Module.GlobalType.FindOrCreateStaticConstructor().Body.Instructions.Insert(0, new Instruction(OpCodes.Calli, init.MethodSig));
             Context.Instance.Module.GlobalType.FindOrCreateStaticConstructor().Body.Instructions.Insert(0, new Instruction(OpCodes.Ldftn, init));
             #endregion

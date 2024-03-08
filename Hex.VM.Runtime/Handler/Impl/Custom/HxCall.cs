@@ -14,11 +14,12 @@ namespace Hex.VM.Runtime.Handler.Impl.Custom
 
             switch (prefix)
             {
+                // Constructor
                 case 0:
                     {
                         var constructor = Helper.ResolveConstructor(mdtoken);
                         var parameters = Helper.GetMethodParameters(ctx, constructor);
-                        var owner = constructor.IsStatic ? null : ctx.Stack.Pop().GetObject();
+                        var owner = constructor.IsStatic ? null : ctx.Stack.Pop()?.GetObject();
 
                         object instance;
 
@@ -40,11 +41,12 @@ namespace Hex.VM.Runtime.Handler.Impl.Custom
                             ctx.Stack.Push(instance);
                     }
                     break;
+                // Method
                 case 1:
                     {
                         var method = Helper.ResolveMethod(mdtoken);
                         var parameters = Helper.GetMethodParameters(ctx, method);
-                        var owner = method.IsStatic ? null : ctx.Stack.Pop().GetObject();
+                        var owner = method.IsStatic ? null : ctx.Stack.Pop()?.GetObject();
 
                         object result;
 
@@ -66,11 +68,12 @@ namespace Hex.VM.Runtime.Handler.Impl.Custom
                             ctx.Stack.Push(result);
                         break;
                     }
+                // MemberRef
                 case 2:
                     {
                         var member = Helper.ResolveMember(mdtoken);
                         var parameters = Helper.GetMethodParameters(ctx, member);
-                        var owner = member.IsStatic ? null : ctx.Stack.Pop().GetObject();
+                        var owner = member.IsStatic ? null : ctx.Stack.Pop()?.GetObject();
 
                         object result;
 
@@ -80,12 +83,18 @@ namespace Hex.VM.Runtime.Handler.Impl.Custom
                         }
                         else
                         {
-                            var proxy = Helper.CreateProxyMethodCall(member);
+                            try
+                            {
+                                var proxy = Helper.CreateProxyMethodCall(member);
 
-                            if (!member.IsStatic)
-                                parameters.Insert(0, owner);
+                                if (!member.IsStatic)
+                                    parameters.Insert(0, owner);
 
-                            result = proxy.DynamicInvoke(parameters.ToArray());
+                                result = proxy.DynamicInvoke(parameters.ToArray());
+                            } catch
+                            {
+                                result = member.Invoke(owner, parameters.ToArray());
+                            }
                         }
 
                         if (result != null)

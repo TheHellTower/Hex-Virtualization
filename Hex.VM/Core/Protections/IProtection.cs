@@ -2,6 +2,7 @@
 {
     public abstract class IProtection
 	{
-		public abstract void Execute(Context context);
-	}
+        public abstract string Name();
+        public abstract void Execute(Context context);
+    }
 }
