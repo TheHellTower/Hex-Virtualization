@@ -19,9 +19,9 @@ namespace Hex.VM.Core
 			{
 				foreach(IProtection Protection in Context.Protections)
 				{
-                    Context.Log.Information($"{Protection.Name()} phase..");
-                    Protection.Execute(Context);
-                }
+					Context.Log.Information($"{Protection.Name()} phase..");
+					Protection.Execute(Context);
+				}
             }
 			catch (Exception exc)
 			{
