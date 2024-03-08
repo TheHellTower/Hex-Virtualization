@@ -28,7 +28,7 @@ namespace Hex.VM.Core
 				Context.Log.Error($"Something went wrong while applying virtualization: {exc.Message}");
 			}
 
-			string This = "[https://t.me/TheHellTower_Group]";
+            string This = "[https://t.me/TheHellTower_Group]";
 
 			if (Context.Module.Kind == ModuleKind.Dll)
 				Context.Instance.Module.GlobalType.Name = This;
